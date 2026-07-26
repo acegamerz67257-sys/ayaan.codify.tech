@@ -13,6 +13,7 @@
       <nav aria-label="Games">
         <a href="#home" data-home>All games</a>
         <a href="#leaderboard">Leaderboard</a>
+        <a href="#share">Share</a>
       </nav>
     </header>
 
@@ -29,6 +30,20 @@
           <button class="game-tile ttt-tile" data-open-game="tic-tac-toe"><span>❌ ⭕</span><strong>Tic-Tac-Toe</strong><small>A classic two-player match</small><b>Play →</b></button>
         </div>
         <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
+        <section id="share" class="share-card">
+          <p class="eyebrow">INVITE FRIENDS</p>
+          <h2>Share Game Night</h2>
+          <p>Send the games to friends or let them scan the QR code.</p>
+          <div class="share-content">
+            <div id="qr-code" class="qr-code" aria-label="QR code for the Game Night website"></div>
+            <div class="share-actions">
+              <button id="share-button" class="button primary">Share website</button>
+              <a id="whatsapp-share" class="button whatsapp-button" target="_blank" rel="noopener">Send on WhatsApp</a>
+              <button id="copy-link" class="text-button">Copy website link</button>
+              <p id="share-message" class="share-message" aria-live="polite"></p>
+            </div>
+          </div>
+        </section>
       </section>
 
       <section id="rps" class="game-section game-screen hidden">
@@ -66,6 +81,7 @@
       </section>
     </main>
     <footer>Made for a little friendly competition.</footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

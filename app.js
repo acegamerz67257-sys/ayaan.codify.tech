@@ -3,6 +3,7 @@ const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 const load = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
 
 const scoreKey = "game-night-leaderboard";
+const liveSiteUrl = "https://acegamerz67257-sys.github.io/game-night-by-ayaan/";
 function playerName() { return $("player-name").value.trim() || "Player"; }
 function recordScore(game, score) {
   const scores = load(scoreKey, []);
@@ -36,6 +37,17 @@ $("player-name").value = localStorage.getItem("game-night-player-name") || "";
 $("player-name").addEventListener("change", () => save("game-night-player-name", $("player-name").value.trim()));
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => openGame(button.dataset.openGame)));
+
+// Sharing
+const shareText = "Come play Game Night by Ayaan with me!";
+$("whatsapp-share").href = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${liveSiteUrl}`)}`;
+if (window.QRCode) new QRCode($("qr-code"), { text: liveSiteUrl, width: 136, height: 136, colorDark: "#17233a", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.M });
+$("share-button").addEventListener("click", async () => {
+  if (navigator.share) { try { await navigator.share({ title: "Game Night by Ayaan", text: shareText, url: liveSiteUrl }); } catch { /* The share sheet was closed. */ } }
+  else { await copySiteLink(); }
+});
+async function copySiteLink() { try { await navigator.clipboard.writeText(liveSiteUrl); $("share-message").textContent = "Link copied — paste it anywhere you like."; } catch { $("share-message").textContent = liveSiteUrl; } }
+$("copy-link").addEventListener("click", copySiteLink);
 
 // Rock Paper Scissors
 const moves = ["rock", "paper", "scissors"];
