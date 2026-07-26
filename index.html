@@ -9,23 +9,29 @@
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="#home">Game Night <span>✦</span></a>
+      <a class="brand" href="#home" data-home>Game Night <span>✦</span></a>
       <nav aria-label="Games">
-        <a href="#rps">Rock Paper Scissors</a>
-        <a href="#number">Number Challenge</a>
-        <a href="#tic-tac-toe">Tic-Tac-Toe</a>
+        <a href="#home" data-home>All games</a>
+        <a href="#leaderboard">Leaderboard</a>
       </nav>
     </header>
 
     <main>
-      <section id="home" class="hero">
+      <section id="home" class="hero hub-home">
         <p class="eyebrow">PLAY ANYTIME</p>
-        <h1>Three little games,<br /><em>one big break.</em></h1>
-        <p>Choose a game below. Your scores are saved privately in this browser.</p>
-        <a class="button primary" href="#rps">Start playing</a>
+        <h1>Choose a game,<br /><em>make your score.</em></h1>
+        <p>Pick any game to begin. Your scores are saved privately in this browser.</p>
+        <label class="player-label" for="player-name">Player name</label>
+        <input id="player-name" class="player-name" maxlength="24" placeholder="Enter your name" />
+        <div class="game-grid" aria-label="Available games">
+          <button class="game-tile rps-tile" data-open-game="rps"><span>🪨 📄 ✂️</span><strong>Rock Paper Scissors</strong><small>Five rounds against the computer</small><b>Play →</b></button>
+          <button class="game-tile number-tile" data-open-game="number"><span>🎯</span><strong>Number Challenge</strong><small>Guess the secret number in time</small><b>Play →</b></button>
+          <button class="game-tile ttt-tile" data-open-game="tic-tac-toe"><span>❌ ⭕</span><strong>Tic-Tac-Toe</strong><small>A classic two-player match</small><b>Play →</b></button>
+        </div>
+        <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
       </section>
 
-      <section id="rps" class="game-section">
+      <section id="rps" class="game-section game-screen hidden">
         <div class="section-heading"><p class="eyebrow">01 — QUICK MATCH</p><h2>Rock Paper Scissors</h2><p>Five rounds against the computer. Win rounds to score points.</p></div>
         <div class="game-card rps-card">
           <div class="scoreline"><div><span>You</span><strong id="rps-player-score">0</strong></div><div class="round-pill" id="rps-round">Round 1 / 5</div><div><span>Computer</span><strong id="rps-computer-score">0</strong></div></div>
@@ -35,27 +41,27 @@
             <button class="choice" data-rps-move="paper"><span>📄</span>Paper</button>
             <button class="choice" data-rps-move="scissors"><span>✂️</span>Scissors</button>
           </div>
-          <div class="game-footer"><span id="rps-points">0 points</span><button id="rps-reset" class="text-button">New game ↻</button></div>
+          <div class="game-footer"><span id="rps-points">0 points</span><span><button id="rps-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
         </div>
       </section>
 
-      <section id="number" class="game-section alt-section">
+      <section id="number" class="game-section alt-section game-screen hidden">
         <div class="section-heading"><p class="eyebrow">02 — BEAT THE CLOCK</p><h2>Number Challenge</h2><p>Find the secret number from 1 to 100 in three timed rounds.</p></div>
         <div class="game-card number-card">
           <div class="number-stats"><div><span>Round</span><strong id="number-round">1 / 3</strong></div><div><span>Time left</span><strong id="number-timer">2:00</strong></div><div><span>Points</span><strong id="number-points">0</strong></div></div>
           <p id="number-message" class="game-message" aria-live="polite">Pick a number from 1 to 100.</p>
           <form id="number-form" class="guess-form"><label class="sr-only" for="number-guess">Your guess</label><input id="number-guess" type="number" inputmode="numeric" min="1" max="100" placeholder="Your guess" required /><button class="button primary">Guess</button></form>
           <button id="number-next" class="button secondary hidden">Next round →</button>
-          <div class="game-footer"><span id="number-attempts">0 guesses this round</span><button id="number-reset" class="text-button">New game ↻</button></div>
+          <div class="game-footer"><span id="number-attempts">0 guesses this round</span><span><button id="number-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
         </div>
       </section>
 
-      <section id="tic-tac-toe" class="game-section">
+      <section id="tic-tac-toe" class="game-section game-screen hidden">
         <div class="section-heading"><p class="eyebrow">03 — TWO PLAYER</p><h2>Tic-Tac-Toe</h2><p>Pass the device and play a classic two-player match.</p></div>
         <div class="game-card ttt-card">
           <div class="turn-label" id="ttt-message" aria-live="polite">Player X's turn</div>
           <div id="ttt-board" class="board" aria-label="Tic-Tac-Toe board"></div>
-          <div class="game-footer"><span id="ttt-score">X: 0 wins · O: 0 wins</span><button id="ttt-reset" class="text-button">New round ↻</button></div>
+          <div class="game-footer"><span id="ttt-score">X: 0 wins · O: 0 wins</span><span><button id="ttt-reset" class="text-button">New round ↻</button><button class="text-button" data-home>All games</button></span></div>
         </div>
       </section>
     </main>
