@@ -29,6 +29,7 @@
           <button class="game-tile number-tile" data-open-game="number"><span>🎯</span><strong>Number Challenge</strong><small>Guess the secret number in time</small><b>Play →</b></button>
           <button class="game-tile ttt-tile" data-open-game="tic-tac-toe"><span>❌ ⭕</span><strong>Tic-Tac-Toe</strong><small>A classic two-player match</small><b>Play →</b></button>
           <button class="game-tile odd-even-tile" data-open-game="odd-even"><span>🎲</span><strong>Odd or Even</strong><small>Predict the roll in five quick rounds</small><b>Play →</b></button>
+          <button class="game-tile chopsticks-tile" data-open-game="chopsticks"><span>✋ 🤖</span><strong>Chopsticks</strong><small>Tap hands and beat the Bot</small><b>Play →</b></button>
         </div>
         <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
         <section id="share" class="share-card">
@@ -87,6 +88,20 @@
           <p id="odd-even-message" class="game-message" aria-live="polite">Will the roll be odd or even?</p>
           <div class="choice-row two-choices"><button class="choice odd-choice" data-odd-even-choice="odd"><span>1 · 3 · 5</span>Odd</button><button class="choice even-choice" data-odd-even-choice="even"><span>2 · 4 · 6</span>Even</button></div>
           <div class="game-footer"><span id="odd-even-result">Choose Odd or Even to roll.</span><span><button id="odd-even-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+        </div>
+      </section>
+
+      <section id="chopsticks" class="game-section game-screen hidden">
+        <div class="section-heading"><p class="eyebrow">05 — PLAYER VS BOT</p><h2>Chopsticks</h2><p>Choose one of your hands, then tap a Bot hand to attack it. Knock out both Bot hands to win.</p></div>
+        <div class="game-card chopsticks-card">
+          <p id="chopsticks-message" class="game-message" aria-live="polite">Your turn — choose one of your hands.</p>
+          <div class="chopsticks-players">
+            <section class="chopsticks-player active" id="chopsticks-player"><h3>You</h3><div class="chopsticks-hands"><button class="chopsticks-hand" id="chopsticks-p0h0"><span>✋</span><b>1</b><small>Left hand</small></button><button class="chopsticks-hand" id="chopsticks-p0h1"><span>✋</span><b>1</b><small>Right hand</small></button></div></section>
+            <section class="chopsticks-player" id="chopsticks-bot"><h3>Bot</h3><div class="chopsticks-hands"><button class="chopsticks-hand" id="chopsticks-p1h0"><span>🤖</span><b>1</b><small>Left hand</small></button><button class="chopsticks-hand" id="chopsticks-p1h1"><span>🤖</span><b>1</b><small>Right hand</small></button></div></section>
+          </div>
+          <p class="chopsticks-help" id="chopsticks-help">Step 1: tap one of your hands.</p>
+          <button class="button secondary hidden" id="chopsticks-split">Split your hands evenly</button>
+          <div class="game-footer"><span>Hands at 5 are out</span><span><button id="chopsticks-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
         </div>
       </section>
 

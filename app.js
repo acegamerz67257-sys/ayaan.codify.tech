@@ -33,6 +33,7 @@ function openGame(game) {
   if (game === "rps") { rps = newRps(); renderRps(); }
   if (game === "tic-tac-toe") { ttt = newTtt(); renderTtt(); }
   if (game === "odd-even") { oddEven = newOddEven(); renderOddEven(); }
+  if (game === "chopsticks") { chopsticks = newChopsticks(); renderChopsticks(); }
 }
 $("player-name").value = localStorage.getItem("game-night-player-name") || "";
 $("player-name").addEventListener("change", () => save("game-night-player-name", $("player-name").value.trim()));
@@ -99,6 +100,51 @@ document.querySelectorAll("[data-odd-even-choice]").forEach((button) => button.a
   renderOddEven(message, `You chose ${choice}. The roll was ${roll} (${result}).`);
 }));
 $("odd-even-reset").addEventListener("click", () => { oddEven = newOddEven(); renderOddEven(); });
+
+// Chopsticks — play against the Bot by tapping your hand, then a Bot hand.
+const newChopsticks = () => ({ hands: [[1, 1], [1, 1]], selected: null, over: false });
+let chopsticks = newChopsticks();
+const handName = (hand) => hand === 0 ? "left" : "right";
+function renderChopsticks(message = "Your turn — choose one of your hands.") {
+  chopsticks.hands.flat().forEach((value, index) => {
+    const player = Math.floor(index / 2), hand = index % 2, button = $(`chopsticks-p${player}h${hand}`);
+    const canChoose = !chopsticks.over && player === 0 && chopsticks.selected === null && value > 0;
+    const canAttack = !chopsticks.over && player === 1 && chopsticks.selected !== null && value > 0;
+    button.querySelector("b").textContent = value;
+    button.disabled = !canChoose && !canAttack;
+    button.classList.toggle("out", value === 0);
+    button.classList.toggle("selected", player === 0 && hand === chopsticks.selected);
+    button.classList.toggle("target", canAttack);
+    button.onclick = canChoose ? () => { chopsticks.selected = hand; renderChopsticks("Now tap one of the blue Bot hands to attack it."); } : canAttack ? () => playChopsticks(hand) : null;
+  });
+  $("chopsticks-player").classList.toggle("active", !chopsticks.over);
+  $("chopsticks-bot").classList.remove("active");
+  $("chopsticks-message").textContent = message;
+  $("chopsticks-help").textContent = chopsticks.over ? "Start a new game to play again." : chopsticks.selected === null ? "Step 1: tap one of your hands." : "Step 2: tap a blue Bot hand.";
+  const total = chopsticks.hands[0][0] + chopsticks.hands[0][1];
+  $("chopsticks-split").classList.toggle("hidden", chopsticks.over || chopsticks.selected !== null || total === 0 || total % 2 || chopsticks.hands[0][0] === total / 2);
+  $("chopsticks-split").textContent = `Split your hands evenly (${total / 2} and ${total / 2})`;
+}
+function botChopsticksMove() {
+  const botHands = chopsticks.hands[1].map((value, hand) => ({ value, hand })).filter(({ value }) => value > 0);
+  const playerHands = chopsticks.hands[0].map((value, hand) => ({ value, hand })).filter(({ value }) => value > 0);
+  const attacker = botHands[Math.floor(Math.random() * botHands.length)];
+  const target = playerHands[Math.floor(Math.random() * playerHands.length)];
+  chopsticks.hands[0][target.hand] += attacker.value;
+  if (chopsticks.hands[0][target.hand] >= 5) chopsticks.hands[0][target.hand] = 0;
+  if (chopsticks.hands[0][0] === 0 && chopsticks.hands[0][1] === 0) { chopsticks.over = true; recordScore("Chopsticks", 0); return `Bot tapped your ${handName(target.hand)} hand. Bot wins!`; }
+  return `Bot tapped your ${handName(target.hand)} hand. Your turn again.`;
+}
+function playChopsticks(botHand) {
+  const attacker = chopsticks.hands[0][chopsticks.selected];
+  chopsticks.hands[1][botHand] += attacker;
+  if (chopsticks.hands[1][botHand] >= 5) chopsticks.hands[1][botHand] = 0;
+  chopsticks.selected = null;
+  if (chopsticks.hands[1][0] === 0 && chopsticks.hands[1][1] === 0) { chopsticks.over = true; recordScore("Chopsticks", 100); renderChopsticks(`You tapped the Bot’s ${handName(botHand)} hand. You win! +100 points`); return; }
+  renderChopsticks(`You tapped the Bot’s ${handName(botHand)} hand. ${botChopsticksMove()}`);
+}
+$("chopsticks-split").addEventListener("click", () => { const total = chopsticks.hands[0][0] + chopsticks.hands[0][1]; chopsticks.hands[0] = [total / 2, total / 2]; renderChopsticks(`You split your hands. ${botChopsticksMove()}`); });
+$("chopsticks-reset").addEventListener("click", () => { chopsticks = newChopsticks(); renderChopsticks(); });
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;

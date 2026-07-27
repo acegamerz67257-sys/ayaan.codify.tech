@@ -6,6 +6,7 @@ A static browser version of the original Python games:
 - Number Challenge
 - Tic-Tac-Toe
 - Odd or Even
+- Chopsticks
 
 Open `index.html` in a browser to play locally. The site is ready for GitHub Pages: push this repository to GitHub, then enable **Settings → Pages → Deploy from a branch → main → /(root)**.
 
