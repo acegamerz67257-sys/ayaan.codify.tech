@@ -28,6 +28,7 @@
           <button class="game-tile rps-tile" data-open-game="rps"><span>🪨 📄 ✂️</span><strong>Rock Paper Scissors</strong><small>Five rounds against the computer</small><b>Play →</b></button>
           <button class="game-tile number-tile" data-open-game="number"><span>🎯</span><strong>Number Challenge</strong><small>Guess the secret number in time</small><b>Play →</b></button>
           <button class="game-tile ttt-tile" data-open-game="tic-tac-toe"><span>❌ ⭕</span><strong>Tic-Tac-Toe</strong><small>A classic two-player match</small><b>Play →</b></button>
+          <button class="game-tile odd-even-tile" data-open-game="odd-even"><span>🎲</span><strong>Odd or Even</strong><small>Predict the roll in five quick rounds</small><b>Play →</b></button>
         </div>
         <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
         <section id="share" class="share-card">
@@ -45,7 +46,6 @@
           </div>
         </section>
       </section>
-
       <section id="rps" class="game-section game-screen hidden">
         <div class="section-heading"><p class="eyebrow">01 — QUICK MATCH</p><h2>Rock Paper Scissors</h2><p>Five rounds against the computer. Win rounds to score points.</p></div>
         <div class="game-card rps-card">
@@ -79,6 +79,17 @@
           <div class="game-footer"><span id="ttt-score">X: 0 wins · O: 0 wins</span><span><button id="ttt-reset" class="text-button">New round ↻</button><button class="text-button" data-home>All games</button></span></div>
         </div>
       </section>
+
+      <section id="odd-even" class="game-section alt-section game-screen hidden">
+        <div class="section-heading"><p class="eyebrow">04 — LUCKY ROLL</p><h2>Odd or Even</h2><p>Pick a side, then see whether the computer's roll matches it. Five rounds, 20 points for every correct call.</p></div>
+        <div class="game-card odd-even-card">
+          <div class="scoreline"><div><span>Correct calls</span><strong id="odd-even-wins">0</strong></div><div class="round-pill" id="odd-even-round">Round 1 / 5</div><div><span>Points</span><strong id="odd-even-points">0</strong></div></div>
+          <p id="odd-even-message" class="game-message" aria-live="polite">Will the roll be odd or even?</p>
+          <div class="choice-row two-choices"><button class="choice odd-choice" data-odd-even-choice="odd"><span>1 · 3 · 5</span>Odd</button><button class="choice even-choice" data-odd-even-choice="even"><span>2 · 4 · 6</span>Even</button></div>
+          <div class="game-footer"><span id="odd-even-result">Choose Odd or Even to roll.</span><span><button id="odd-even-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+        </div>
+      </section>
+
     </main>
     <footer>Made for a little friendly competition.</footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>

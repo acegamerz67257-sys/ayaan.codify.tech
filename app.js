@@ -32,6 +32,7 @@ function openGame(game) {
   if (game === "number") newNumberGame();
   if (game === "rps") { rps = newRps(); renderRps(); }
   if (game === "tic-tac-toe") { ttt = newTtt(); renderTtt(); }
+  if (game === "odd-even") { oddEven = newOddEven(); renderOddEven(); }
 }
 $("player-name").value = localStorage.getItem("game-night-player-name") || "";
 $("player-name").addEventListener("change", () => save("game-night-player-name", $("player-name").value.trim()));
@@ -70,6 +71,34 @@ document.querySelectorAll("[data-rps-move]").forEach((button) => button.addEvent
   renderRps(message);
 }));
 $("rps-reset").addEventListener("click", () => { rps = newRps(); renderRps(); });
+
+// Odd or Even
+const newOddEven = () => ({ round: 1, wins: 0, points: 0, over: false });
+let oddEven = newOddEven();
+function renderOddEven(message = "Will the roll be odd or even?", result = "Choose Odd or Even to roll.") {
+  $("odd-even-wins").textContent = oddEven.wins;
+  $("odd-even-points").textContent = oddEven.points;
+  $("odd-even-round").textContent = oddEven.over ? "Game complete" : `Round ${oddEven.round} / 5`;
+  $("odd-even-message").textContent = message;
+  $("odd-even-result").textContent = result;
+}
+document.querySelectorAll("[data-odd-even-choice]").forEach((button) => button.addEventListener("click", () => {
+  if (oddEven.over) return renderOddEven("This game is over — start a new one!", "Use New game to play again.");
+  const choice = button.dataset.oddEvenChoice;
+  const roll = Math.floor(Math.random() * 6) + 1;
+  const result = roll % 2 ? "odd" : "even";
+  const correct = choice === result;
+  let message = `The computer rolled ${roll} — ${result.toUpperCase()}!`;
+  if (correct) { oddEven.wins++; oddEven.points += 20; message += " Great call! +20 points"; }
+  else message += " Not this time.";
+  if (oddEven.round === 5) {
+    oddEven.over = true;
+    recordScore("Odd or Even", oddEven.points);
+    message += ` Game complete: ${oddEven.wins} correct call${oddEven.wins === 1 ? "" : "s"}.`;
+  } else oddEven.round++;
+  renderOddEven(message, `You chose ${choice}. The roll was ${roll} (${result}).`);
+}));
+$("odd-even-reset").addEventListener("click", () => { oddEven = newOddEven(); renderOddEven(); });
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;
