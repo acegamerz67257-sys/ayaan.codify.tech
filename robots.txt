@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://acegamerz67257-sys.github.io/game-night-by-ayaan/sitemap.xml
