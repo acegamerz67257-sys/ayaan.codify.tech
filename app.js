@@ -21,6 +21,7 @@ function renderLeaderboard() {
 }
 function showHome() {
   clearInterval(numberTimer);
+  clearInterval(footballTimer);
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
 }
@@ -34,6 +35,7 @@ function openGame(game) {
   if (game === "tic-tac-toe") { ttt = newTtt(); renderTtt(); }
   if (game === "odd-even") { oddEven = newOddEven(); renderOddEven(); }
   if (game === "chopsticks") { chopsticks = newChopsticks(); renderChopsticks(); }
+  if (game === "footballers") newFootballGame();
 }
 $("player-name").value = localStorage.getItem("game-night-player-name") || "";
 $("player-name").addEventListener("change", () => save("game-night-player-name", $("player-name").value.trim()));
@@ -145,6 +147,19 @@ function playChopsticks(botHand) {
 }
 $("chopsticks-split").addEventListener("click", () => { const total = chopsticks.hands[0][0] + chopsticks.hands[0][1]; chopsticks.hands[0] = [total / 2, total / 2]; renderChopsticks(`You split your hands. ${botChopsticksMove()}`); });
 $("chopsticks-reset").addEventListener("click", () => { chopsticks = newChopsticks(); renderChopsticks(); });
+
+// Footballer Name Challenge
+const footballers = ["Lionel Messi","Cristiano Ronaldo","Kylian Mbappe","Erling Haaland","Neymar","Kevin De Bruyne","Mohamed Salah","Harry Kane","Robert Lewandowski","Vinicius Junior","Jude Bellingham","Luka Modric","Sergio Ramos","Virgil van Dijk","Karim Benzema","Antoine Griezmann","Son Heung-min","Bukayo Saka","Phil Foden","Cole Palmer","Rodri","Pedri","Gavi","Jamal Musiala","Florian Wirtz","Lamine Yamal","Ronaldo Nazario","Ronaldinho","Zinedine Zidane","Thierry Henry","David Beckham","Wayne Rooney","Andres Iniesta","Xavi","Paolo Maldini","Gianluigi Buffon","Manuel Neuer","Iker Casillas","Didier Drogba","Samuel Eto'o","George Weah","Pele","Diego Maradona","Zlatan Ibrahimovic","Luis Suarez","Eden Hazard","Gareth Bale","Steven Gerrard","Frank Lampard","Marcus Rashford","Bruno Fernandes","Bernardo Silva","Alisson Becker","Thibaut Courtois","Achraf Hakimi","Sadio Mane","Victor Osimhen","Declan Rice","Martin Odegaard"];
+const footballKey = (value) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+let footballGame = null, footballTimer = null;
+function newFootballGame() { clearInterval(footballTimer); footballGame = { score: 0, remaining: 120, used: new Set(), history: [], over: false }; $("football-name").value = ""; $("football-name").disabled = false; $("football-form").querySelector("button").disabled = false; $("football-bot").innerHTML = "<small>Bot says</small>Waiting for your first name"; renderFootball(); footballTimer = setInterval(tickFootball, 1000); $("football-name").focus(); }
+function renderFootball(message = "Name any footballer to begin.") { if (!footballGame) return; const seconds = Math.max(0, footballGame.remaining); const saved = load(scoreKey, []).find((item) => item.name.toLowerCase() === playerName().toLowerCase() && item.game === "Footballer Challenge")?.score || 0; $("football-score").textContent = footballGame.score; $("football-best").textContent = Math.max(saved, footballGame.score); $("football-timer").textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; $("football-message").textContent = message; $("football-history").innerHTML = footballGame.history.length ? `<strong>Names used</strong>${footballGame.history.map((item) => `<p><b>${item.who}:</b> ${item.name}</p>`).reverse().join("")}` : ""; }
+function finishFootball(message) { if (!footballGame || footballGame.over) return; footballGame.over = true; clearInterval(footballTimer); recordScore("Footballer Challenge", footballGame.score); $("football-name").disabled = true; $("football-form").querySelector("button").disabled = true; $("football-bot").innerHTML = `<small>Game complete</small>Your score: ${footballGame.score}`; renderFootball(message); }
+function tickFootball() { if (!footballGame || footballGame.over) return; footballGame.remaining--; if (footballGame.remaining <= 0) { footballGame.remaining = 0; finishFootball("Time is up! Your best score is on the leaderboard."); } else renderFootball(footballGame.lastMessage || "Name another footballer."); }
+async function findFootballer(typed) { const local = footballers.find((name) => footballKey(name) === footballKey(typed)); if (local) return local; try { const query = encodeURIComponent(`${typed} footballer`); const response = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${query}&srlimit=1&format=json&origin=*`); const result = await response.json(); const match = result?.query?.search?.[0]; return match && /footballer|soccer player/i.test(match.snippet) ? match.title : typed; } catch { return typed; } }
+function footballBotAnswer() { const options = footballers.filter((name) => !footballGame.used.has(footballKey(name))); const name = options[Math.floor(Math.random() * options.length)]; footballGame.used.add(footballKey(name)); footballGame.history.push({ who: "Bot", name }); $("football-bot").innerHTML = `<small>Bot says</small>${name}`; }
+$("football-form").addEventListener("submit", async (event) => { event.preventDefault(); if (!footballGame || footballGame.over) return; const input = $("football-name"), typed = input.value.trim(), typedKey = footballKey(typed); if (!typedKey) return; if (footballGame.used.has(typedKey)) return finishFootball(`“${typed}” was already said. Game over!`); input.disabled = true; $("football-message").textContent = `Checking ${typed}…`; const known = await findFootballer(typed); if (!footballGame || footballGame.over) return; input.disabled = false; const knownKey = footballKey(known); if (footballGame.used.has(knownKey)) return finishFootball(`“${known}” was already said. Game over!`); footballGame.used.add(knownKey); footballGame.history.push({ who: "You", name: known }); footballGame.score++; footballGame.lastMessage = `Good one! ${known} gives you 1 point.`; input.value = ""; footballBotAnswer(); renderFootball(footballGame.lastMessage); });
+$("football-reset").addEventListener("click", newFootballGame);
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;
