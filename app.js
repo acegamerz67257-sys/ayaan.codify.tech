@@ -22,6 +22,7 @@ function renderLeaderboard() {
 function showHome() {
   clearInterval(numberTimer);
   clearInterval(footballTimer);
+  clearInterval(atlasTimer);
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
 }
@@ -36,6 +37,7 @@ function openGame(game) {
   if (game === "odd-even") { oddEven = newOddEven(); renderOddEven(); }
   if (game === "chopsticks") { chopsticks = newChopsticks(); renderChopsticks(); }
   if (game === "footballers") newFootballGame();
+  if (game === "atlas") newAtlasGame();
 }
 $("player-name").value = localStorage.getItem("game-night-player-name") || "";
 $("player-name").addEventListener("change", () => save("game-night-player-name", $("player-name").value.trim()));
@@ -160,6 +162,20 @@ async function findFootballer(typed) { const local = footballers.find((name) => 
 function footballBotAnswer() { const options = footballers.filter((name) => !footballGame.used.has(footballKey(name))); const name = options[Math.floor(Math.random() * options.length)]; footballGame.used.add(footballKey(name)); footballGame.history.push({ who: "Bot", name }); $("football-bot").innerHTML = `<small>Bot says</small>${name}`; }
 $("football-form").addEventListener("submit", async (event) => { event.preventDefault(); if (!footballGame || footballGame.over) return; const input = $("football-name"), typed = input.value.trim(), typedKey = footballKey(typed); if (!typedKey) return; if (footballGame.used.has(typedKey)) return finishFootball(`“${typed}” was already said. Game over!`); input.disabled = true; $("football-message").textContent = `Checking ${typed}…`; const known = await findFootballer(typed); if (!footballGame || footballGame.over) return; input.disabled = false; const knownKey = footballKey(known); if (footballGame.used.has(knownKey)) return finishFootball(`“${known}” was already said. Game over!`); footballGame.used.add(knownKey); footballGame.history.push({ who: "You", name: known }); footballGame.score++; footballGame.lastMessage = `Good one! ${known} gives you 1 point.`; input.value = ""; footballBotAnswer(); renderFootball(footballGame.lastMessage); });
 $("football-reset").addEventListener("click", newFootballGame);
+
+// Atlas — use the last letter of each place name to continue the chain.
+const atlasPlaces = ["Agra","Amsterdam","Athens","Australia","Argentina","Alaska","Abu Dhabi","Bengaluru","Berlin","Bhopal","Barcelona","Brazil","Brussels","Bangalore","Cairo","Canada","Chennai","Chicago","China","Colombo","Delhi","Dubai","Dublin","Denmark","Edinburgh","England","Egypt","Ethiopia","France","Fiji","Florence","Finland","Goa","Germany","Geneva","Gujarat","Greece","Hanoi","Hyderabad","Hawaii","Hong Kong","Hungary","India","Iceland","Indonesia","Iran","Italy","Jaipur","Japan","Jordan","Jakarta","Kolkata","Kenya","Kochi","Kashmir","London","Lucknow","Lisbon","Ladakh","Mumbai","Madrid","Mexico","Mysore","Nepal","Nigeria","New York","Norway","Oman","Oslo","Ottawa","Paris","Peru","Punjab","Portugal","Qatar","Quebec","Rome","Russia","Rajasthan","Riyadh","Spain","Singapore","Sweden","Sydney","Switzerland","Thailand","Tokyo","Turkey","Toronto","Udaipur","Uganda","United Kingdom","United States","Venice","Vietnam","Varanasi","Wales","Washington","Yemen","Zurich","Zimbabwe"];
+const atlasKey = (value) => value.toLowerCase().replace(/[^a-z]/g, "");
+const atlasFirst = (value) => atlasKey(value)[0] || "";
+const atlasLast = (value) => { const letters = atlasKey(value); return letters[letters.length - 1] || ""; };
+let atlasGame = null, atlasTimer = null;
+function newAtlasGame() { clearInterval(atlasTimer); atlasGame = { score: 0, remaining: 120, used: new Set(), history: [], needed: "", over: false }; $("atlas-name").value = ""; $("atlas-name").disabled = false; $("atlas-form").querySelector("button").disabled = false; $("atlas-bot").innerHTML = "<small>Bot says</small>Waiting for your first place"; renderAtlas(); atlasTimer = setInterval(tickAtlas, 1000); $("atlas-name").focus(); }
+function renderAtlas(message = "Name any place to begin.") { if (!atlasGame) return; const seconds = Math.max(0, atlasGame.remaining); const saved = load(scoreKey, []).find((item) => item.name.toLowerCase() === playerName().toLowerCase() && item.game === "Atlas")?.score || 0; $("atlas-score").textContent = atlasGame.score; $("atlas-best").textContent = Math.max(saved, atlasGame.score); $("atlas-timer").textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; $("atlas-letter").innerHTML = atlasGame.needed ? `Your place must start with <b>${atlasGame.needed.toUpperCase()}</b>` : "Start with <b>any letter</b>"; $("atlas-message").textContent = message; $("atlas-history").innerHTML = atlasGame.history.length ? `<strong>Places used</strong>${atlasGame.history.map((item) => `<p><b>${item.who}:</b> ${item.name}</p>`).reverse().join("")}` : ""; }
+function finishAtlas(message) { if (!atlasGame || atlasGame.over) return; atlasGame.over = true; clearInterval(atlasTimer); recordScore("Atlas", atlasGame.score); $("atlas-name").disabled = true; $("atlas-form").querySelector("button").disabled = true; $("atlas-bot").innerHTML = `<small>Game complete</small>Your score: ${atlasGame.score}`; renderAtlas(message); }
+function tickAtlas() { if (!atlasGame || atlasGame.over) return; atlasGame.remaining--; if (atlasGame.remaining <= 0) { atlasGame.remaining = 0; finishAtlas("Time is up! Your best score is on the leaderboard."); } else renderAtlas(atlasGame.lastMessage || "Name another place."); }
+function atlasBotAnswer() { const options = atlasPlaces.filter((place) => atlasFirst(place) === atlasGame.needed && !atlasGame.used.has(atlasKey(place))); if (!options.length) return finishAtlas(`The Bot cannot find a new place starting with ${atlasGame.needed.toUpperCase()}. You win!`); const place = options[Math.floor(Math.random() * options.length)]; atlasGame.used.add(atlasKey(place)); atlasGame.history.push({ who: "Bot", name: place }); atlasGame.needed = atlasLast(place); $("atlas-bot").innerHTML = `<small>Bot says</small>${place}`; }
+$("atlas-form").addEventListener("submit", (event) => { event.preventDefault(); if (!atlasGame || atlasGame.over) return; const input = $("atlas-name"), typed = input.value.trim(), key = atlasKey(typed); if (!key) return; if (atlasGame.used.has(key)) return finishAtlas(`“${typed}” was already used. Game over!`); if (atlasGame.needed && atlasFirst(typed) !== atlasGame.needed) { $("atlas-message").textContent = `That place must start with ${atlasGame.needed.toUpperCase()}. Try again.`; return; } atlasGame.used.add(key); atlasGame.history.push({ who: "You", name: typed }); atlasGame.score++; atlasGame.needed = atlasLast(typed); atlasGame.lastMessage = `Good one! ${typed} gives you 1 point.`; input.value = ""; atlasBotAnswer(); renderAtlas(atlasGame.lastMessage); });
+$("atlas-reset").addEventListener("click", newAtlasGame);
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;

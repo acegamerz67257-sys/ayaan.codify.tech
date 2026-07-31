@@ -33,6 +33,7 @@
           <button class="game-tile odd-even-tile" data-open-game="odd-even"><span>🎲</span><strong>Odd or Even</strong><small>Predict the roll in five quick rounds</small><b>Play →</b></button>
           <button class="game-tile chopsticks-tile" data-open-game="chopsticks"><span>✋ 🤖</span><strong>Chopsticks</strong><small>Tap hands and beat the Bot</small><b>Play →</b></button>
           <button class="game-tile football-tile" data-open-game="footballers"><span>⚽</span><strong>Footballer Challenge</strong><small>Name players before time runs out</small><b>Play →</b></button>
+          <button class="game-tile atlas-tile" data-open-game="atlas"><span>🌍</span><strong>Atlas</strong><small>Keep the place-name chain going</small><b>Play →</b></button>
         </div>
         <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
         <section id="share" class="share-card">
@@ -117,6 +118,19 @@
           <div class="football-bot" id="football-bot"><small>Bot says</small>Waiting for your first name</div>
           <div class="football-history" id="football-history"></div>
           <div class="game-footer"><span>One footballer = one point</span><span><button id="football-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+        </div>
+      </section>
+
+      <section id="atlas" class="game-section game-screen hidden">
+        <div class="section-heading"><p class="eyebrow">07 — PLAYER VS BOT</p><h2>Atlas</h2><p>Name a place using the final letter of the Bot’s last place. Do not repeat a place and beat the two-minute clock.</p></div>
+        <div class="game-card atlas-card">
+          <div class="football-stats"><div><span>Your score</span><strong id="atlas-score">0</strong></div><div><span>Time left</span><strong id="atlas-timer">2:00</strong></div><div><span>Best score</span><strong id="atlas-best">0</strong></div></div>
+          <div class="atlas-letter" id="atlas-letter">Start with <b>any letter</b></div>
+          <p id="atlas-message" class="game-message" aria-live="polite">Name any place to begin.</p>
+          <form id="atlas-form" class="guess-form"><label class="sr-only" for="atlas-name">Place name</label><input id="atlas-name" autocomplete="off" placeholder="Type a place name" required /><button class="button primary">Say place →</button></form>
+          <div class="football-bot" id="atlas-bot"><small>Bot says</small>Waiting for your first place</div>
+          <div class="football-history" id="atlas-history"></div>
+          <div class="game-footer"><span>One place = one point</span><span><button id="atlas-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
         </div>
       </section>
 
