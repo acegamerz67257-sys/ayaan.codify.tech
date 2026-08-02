@@ -1,0 +1,12 @@
+{
+  "accounts": {},
+  "leaderboards": {
+    "rock_paper_scissors": [],
+    "number_challenge": [],
+    "tic_tac_toe": [],
+    "odd_or_even": [],
+    "chopsticks": [],
+    "footballer_challenge": [],
+    "atlas": []
+  }
+}

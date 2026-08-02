@@ -3,8 +3,10 @@ const save = (key, value) => localStorage.setItem(key, JSON.stringify(value));
 const load = (key, fallback) => { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } };
 
 const scoreKey = "game-night-leaderboard";
+const accountKey = "game-night-accounts";
+const activeAccountKey = "game-night-active-account";
 const liveSiteUrl = "https://acegamerz67257-sys.github.io/game-night-by-ayaan/";
-function playerName() { return $("player-name").value.trim() || "Player"; }
+function playerName() { return localStorage.getItem(activeAccountKey) || "Player"; }
 function recordScore(game, score) {
   const scores = load(scoreKey, []);
   const name = playerName();
@@ -27,8 +29,7 @@ function showHome() {
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
 }
 function openGame(game) {
-  const name = $("player-name").value.trim();
-  save("game-night-player-name", name); $("home").classList.add("hidden");
+  $("home").classList.add("hidden");
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $(game).classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" });
   if (game === "number") newNumberGame();
@@ -39,10 +40,46 @@ function openGame(game) {
   if (game === "footballers") newFootballGame();
   if (game === "atlas") newAtlasGame();
 }
-$("player-name").value = localStorage.getItem("game-night-player-name") || "";
-$("player-name").addEventListener("change", () => save("game-night-player-name", $("player-name").value.trim()));
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => openGame(button.dataset.openGame)));
+
+// Local player accounts — a simple four-digit code for this browser.
+let accountMode = "login";
+function accounts() { return load(accountKey, {}); }
+function setLoginMode(mode) {
+  accountMode = mode;
+  $("login-title").textContent = mode === "login" ? "Log in" : "Create account";
+  $("login-note").textContent = mode === "login" ? "Enter your username and four-digit code." : "Choose a username and your own four-digit code.";
+  $("login-submit").textContent = mode === "login" ? "Log in" : "Create account";
+  $("switch-login-mode").textContent = mode === "login" ? "New player? Create an account" : "Already have an account? Log in";
+  $("login-message").textContent = "";
+}
+function refreshAccountUi() {
+  const name = localStorage.getItem(activeAccountKey);
+  $("login-button").classList.toggle("hidden", Boolean(name));
+  $("logout-button").classList.toggle("hidden", !name);
+  if (name) $("logout-button").textContent = `Log out ${name}`;
+}
+function openLogin(mode = "login") { setLoginMode(mode); $("login-name").value = localStorage.getItem(activeAccountKey) || ""; $("login-pin").value = ""; $("login-modal").classList.remove("hidden"); $("login-name").focus(); }
+function closeLogin() { $("login-modal").classList.add("hidden"); }
+$("login-button").addEventListener("click", () => openLogin());
+$("logout-button").addEventListener("click", () => { localStorage.removeItem(activeAccountKey); refreshAccountUi(); });
+$("close-login").addEventListener("click", closeLogin);
+$("switch-login-mode").addEventListener("click", () => setLoginMode(accountMode === "login" ? "create" : "login"));
+$("login-modal").addEventListener("click", (event) => { if (event.target === $("login-modal")) closeLogin(); });
+$("login-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = $("login-name").value.trim(), pin = $("login-pin").value;
+  if (!name || !/^\d{4}$/.test(pin)) { $("login-message").textContent = "Use a username and exactly four digits."; return; }
+  const allAccounts = accounts(), key = name.toLowerCase();
+  if (accountMode === "create") {
+    if (allAccounts[key]) { $("login-message").textContent = "That username already exists on this browser. Try logging in."; return; }
+    allAccounts[key] = { name, pin }; save(accountKey, allAccounts);
+  } else if (!allAccounts[key] || allAccounts[key].pin !== pin) { $("login-message").textContent = "Username or four-digit code is incorrect."; return; }
+  localStorage.setItem(activeAccountKey, allAccounts[key].name);
+  refreshAccountUi(); closeLogin();
+});
+refreshAccountUi();
 
 // Sharing
 const shareText = "Come play Game Night by Ayaan with me!";
