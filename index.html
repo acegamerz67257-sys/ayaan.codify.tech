@@ -61,7 +61,7 @@
             <button class="choice" data-rps-move="paper"><span>📄</span>Paper</button>
             <button class="choice" data-rps-move="scissors"><span>✂️</span>Scissors</button>
           </div>
-          <div class="game-footer"><span id="rps-points">0 points</span><span><button id="rps-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span id="rps-points">0 points</span><span><button id="rps-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
@@ -72,7 +72,7 @@
           <p id="number-message" class="game-message" aria-live="polite">Pick a number from 1 to 100.</p>
           <form id="number-form" class="guess-form"><label class="sr-only" for="number-guess">Your guess</label><input id="number-guess" type="number" inputmode="numeric" min="1" max="100" placeholder="Your guess" required /><button class="button primary">Guess</button></form>
           <button id="number-next" class="button secondary hidden">Next round →</button>
-          <div class="game-footer"><span id="number-attempts">0 guesses this round</span><span><button id="number-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span id="number-attempts">0 guesses this round</span><span><button id="number-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
@@ -81,7 +81,7 @@
         <div class="game-card ttt-card">
           <div class="turn-label" id="ttt-message" aria-live="polite">Player X's turn</div>
           <div id="ttt-board" class="board" aria-label="Tic-Tac-Toe board"></div>
-          <div class="game-footer"><span id="ttt-score">X: 0 wins · O: 0 wins</span><span><button id="ttt-reset" class="text-button">New round ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span id="ttt-score">X: 0 wins · O: 0 wins</span><span><button id="ttt-reset" class="text-button game-action new-game-button">New round ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
@@ -91,7 +91,7 @@
           <div class="scoreline"><div><span>Correct calls</span><strong id="odd-even-wins">0</strong></div><div class="round-pill" id="odd-even-round">Round 1 / 5</div><div><span>Points</span><strong id="odd-even-points">0</strong></div></div>
           <p id="odd-even-message" class="game-message" aria-live="polite">Will the roll be odd or even?</p>
           <div class="choice-row two-choices"><button class="choice odd-choice" data-odd-even-choice="odd"><span>1 · 3 · 5</span>Odd</button><button class="choice even-choice" data-odd-even-choice="even"><span>2 · 4 · 6</span>Even</button></div>
-          <div class="game-footer"><span id="odd-even-result">Choose Odd or Even to roll.</span><span><button id="odd-even-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span id="odd-even-result">Choose Odd or Even to roll.</span><span><button id="odd-even-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
@@ -105,7 +105,7 @@
           </div>
           <p class="chopsticks-help" id="chopsticks-help">Step 1: tap one of your hands.</p>
           <button class="button secondary hidden" id="chopsticks-split">Split your hands evenly</button>
-          <div class="game-footer"><span>Hands at 5 are out</span><span><button id="chopsticks-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span>Hands at 5 are out</span><span><button id="chopsticks-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
@@ -117,7 +117,7 @@
           <form id="football-form" class="guess-form"><label class="sr-only" for="football-name">Footballer name</label><input id="football-name" autocomplete="off" placeholder="Type a footballer’s name" required /><button class="button primary">Say name →</button></form>
           <div class="football-bot" id="football-bot"><small>Bot says</small>Waiting for your first name</div>
           <div class="football-history" id="football-history"></div>
-          <div class="game-footer"><span>One footballer = one point</span><span><button id="football-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span>One footballer = one point</span><span><button id="football-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
@@ -130,7 +130,7 @@
           <form id="atlas-form" class="guess-form"><label class="sr-only" for="atlas-name">Place name</label><input id="atlas-name" autocomplete="off" placeholder="Type a place name" required /><button class="button primary">Say place →</button></form>
           <div class="football-bot" id="atlas-bot"><small>Bot says</small>Waiting for your first place</div>
           <div class="football-history" id="atlas-history"></div>
-          <div class="game-footer"><span>One place = one point</span><span><button id="atlas-reset" class="text-button">New game ↻</button><button class="text-button" data-home>All games</button></span></div>
+          <div class="game-footer"><span>One place = one point</span><span><button id="atlas-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
       </section>
 
