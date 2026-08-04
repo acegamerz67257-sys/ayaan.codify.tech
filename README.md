@@ -9,6 +9,7 @@ A static browser version of the original Python games:
 - Chopsticks
 - Footballer Name Challenge
 - Atlas
+- Footballer Atlas
 
 Open `index.html` in a browser to play locally. The site is ready for GitHub Pages: push this repository to GitHub, then enable **Settings → Pages → Deploy from a branch → main → /(root)**.
 
