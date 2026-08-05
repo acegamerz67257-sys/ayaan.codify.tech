@@ -279,6 +279,7 @@ $("capitals-start-button").addEventListener("click", startCapitals);
 $("capitals-form").addEventListener("submit", (event) => { event.preventDefault(); if (!capitalsGame || capitalsGame.answered || capitalsGame.over) return; const current = capitalsGame.questions[capitalsGame.index], guess = $("capitals-answer").value.trim(); if (!guess) return; capitalsGame.answered = true; const outcome = normalCapital(guess) === normalCapital(current[1]) ? `Correct! ${current[1]} is the capital of ${current[0]}. +1 point` : `Not quite. The capital of ${current[0]} is ${current[1]}.`; if (normalCapital(guess) === normalCapital(current[1])) capitalsGame.score++; $("capitals-answer").disabled = true; $("capitals-form").querySelector("button").disabled = true; $("capitals-next").classList.remove("hidden"); renderCapitals(outcome); });
 $("capitals-next").addEventListener("click", () => { if (capitalsGame.index + 1 === capitalsGame.questions.length) { capitalsGame.questions = capitalQuestions(); capitalsGame.index = 0; } else capitalsGame.index++; capitalsGame.answered = false; $("capitals-answer").value = ""; $("capitals-answer").disabled = false; $("capitals-form").querySelector("button").disabled = false; $("capitals-next").classList.add("hidden"); renderCapitals(); $("capitals-answer").focus(); });
 $("capitals-reset").addEventListener("click", newCountryCapitalsGame);
+$("capitals-start-reset").addEventListener("click", newCountryCapitalsGame);
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;
