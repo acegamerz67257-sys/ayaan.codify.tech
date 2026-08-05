@@ -6,6 +6,34 @@ const scoreKey = "game-night-leaderboard";
 const accountKey = "game-night-accounts";
 const activeAccountKey = "game-night-active-account";
 const liveSiteUrl = "https://acegamerz67257-sys.github.io/game-night-by-ayaan/";
+const audioSettingKey = "game-night-audio-enabled";
+let audioEnabled = true;
+let audioContext = null, musicTimer = null, musicStep = 0;
+function ensureAudio() {
+  if (!audioEnabled) return null;
+  if (!window.AudioContext && !window.webkitAudioContext) return null;
+  if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioContext.state === "suspended") audioContext.resume();
+  return audioContext;
+}
+function sound(freq, duration = .12, volume = .045, type = "sine") {
+  const context = ensureAudio();
+  if (!context) return;
+  const oscillator = context.createOscillator(), gain = context.createGain(), now = context.currentTime;
+  oscillator.type = type; oscillator.frequency.setValueAtTime(freq, now);
+  gain.gain.setValueAtTime(.0001, now); gain.gain.exponentialRampToValueAtTime(volume, now + .012); gain.gain.exponentialRampToValueAtTime(.0001, now + duration);
+  oscillator.connect(gain).connect(context.destination); oscillator.start(now); oscillator.stop(now + duration + .02);
+}
+function playClickSound() { sound(700, .11, .11, "square"); }
+function stopGameMusic() { clearInterval(musicTimer); musicTimer = null; }
+function playMusicStep() {
+  const melody = [262, 330, 392, 330, 294, 349, 440, 349, 262, 392, 494, 392];
+  sound(melody[musicStep % melody.length], .28, .055, "triangle");
+  if (musicStep % 4 === 0) sound(melody[(musicStep + 4) % melody.length] / 2, .34, .035, "sine");
+  musicStep++;
+}
+function startGameMusic() { if (!audioEnabled || musicTimer) return; ensureAudio(); musicStep = 0; playMusicStep(); musicTimer = setInterval(playMusicStep, 340); }
+function refreshAudioButton() { $("audio-toggle").textContent = `Sound: ${audioEnabled ? "On" : "Off"}`; $("audio-toggle").setAttribute("aria-pressed", String(audioEnabled)); }
 function playerName() { return localStorage.getItem(activeAccountKey) || "Player"; }
 function recordScore(game, score) {
   const scores = load(scoreKey, []);
@@ -27,6 +55,7 @@ function showHome() {
   clearInterval(atlasTimer);
   clearInterval(footballAtlasTimer);
   clearInterval(capitalsTimer);
+  stopGameMusic();
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
 }
@@ -34,6 +63,7 @@ function openGame(game) {
   $("home").classList.add("hidden");
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $(game).classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" });
+  startGameMusic();
   if (game === "number") newNumberGame();
   if (game === "rps") { rps = newRps(); renderRps(); }
   if (game === "tic-tac-toe") { ttt = newTtt(); renderTtt(); }
@@ -45,7 +75,10 @@ function openGame(game) {
   if (game === "country-capitals") newCountryCapitalsGame();
 }
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
-document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => openGame(button.dataset.openGame)));
+document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => { playClickSound(); openGame(button.dataset.openGame); }));
+document.addEventListener("click", (event) => { if (event.target.closest("button") && event.target.id !== "audio-toggle" && !event.target.closest("[data-open-game]")) playClickSound(); });
+$("audio-toggle").addEventListener("click", () => { audioEnabled = !audioEnabled; localStorage.setItem(audioSettingKey, audioEnabled ? "on" : "off"); if (!audioEnabled) stopGameMusic(); else { playClickSound(); const activeGame = [...document.querySelectorAll(".game-screen")].some((screen) => !screen.classList.contains("hidden")); if (activeGame) startGameMusic(); } refreshAudioButton(); });
+refreshAudioButton();
 
 // Local player accounts — a simple four-digit code for this browser.
 let accountMode = "login";
