@@ -37,6 +37,7 @@
           <button class="game-tile atlas-tile" data-open-game="atlas"><span>🌍</span><strong>Atlas</strong><small>Keep the place-name chain going</small><b>Play →</b></button>
           <button class="game-tile football-atlas-tile" data-open-game="footballer-atlas"><span>⚽ 🔤</span><strong>Footballer Atlas</strong><small>Chain footballer names with the Bot</small><b>Play →</b></button>
           <button class="game-tile capitals-tile" data-open-game="country-capitals"><span>🌐</span><strong>Country Capitals</strong><small>Answer the Bot’s capital questions</small><b>Play →</b></button>
+          <button class="game-tile math-tile" data-open-game="math-puzzle"><span>➗</span><strong>Math Puzzle</strong><small>Find the missing number before time runs out</small><b>Play →</b></button>
         </div>
         <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
         <section id="share" class="share-card">
@@ -158,6 +159,14 @@
         </div>
       </section>
 
+      <section id="math-puzzle" class="game-section alt-section game-screen hidden">
+        <div class="section-heading"><p class="eyebrow">10 — BEAT THE CLOCK</p><h2>Math Puzzle</h2><p>Choose a mode, find the missing number, and solve as many puzzles as you can in two minutes.</p></div>
+        <div class="game-card math-card">
+          <div id="math-start"><p class="eyebrow">CHOOSE A MODE</p><div class="capital-modes"><button class="capital-mode selected" data-math-mode="easy"><b>Easy</b><small>One-digit puzzles</small></button><button class="capital-mode" data-math-mode="normal"><b>Normal</b><small>Two-digit puzzles</small></button><button class="capital-mode" data-math-mode="extreme"><b>Extreme</b><small>Three-digit puzzles</small></button></div><button class="button primary" id="math-start-button">Start 2-minute game</button><div class="game-footer"><span>Choose a mode to begin</span><span><button id="math-start-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div></div>
+          <div id="math-play" class="hidden"><div class="football-stats"><div><span>Score</span><strong id="math-score">0</strong></div><div><span>Time left</span><strong id="math-timer">2:00</strong></div><div><span>Best</span><strong id="math-best">0</strong></div></div><div class="math-question" id="math-question"><small>Solve this</small>9 + _ = 14</div><p id="math-message" class="game-message" aria-live="polite">Type the missing number.</p><form id="math-form" class="guess-form"><label class="sr-only" for="math-answer">Missing number</label><input id="math-answer" type="number" inputmode="numeric" placeholder="Your answer" required /><button class="button primary">Answer →</button></form><button class="button secondary hidden" id="math-next">Next puzzle →</button><div class="game-footer"><span>One correct answer = one point</span><span><button id="math-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div></div>
+        </div>
+      </section>
+
     </main>
     <div class="login-modal hidden" id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
       <div class="login-card">
@@ -176,6 +185,6 @@
     </div>
     <footer>Made for a little friendly competition.</footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="app.js?v=20260805"></script>
+    <script src="app.js?v=20260807"></script>
   </body>
 </html>

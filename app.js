@@ -55,6 +55,7 @@ function showHome() {
   clearInterval(atlasTimer);
   clearInterval(footballAtlasTimer);
   clearInterval(capitalsTimer);
+  clearInterval(mathTimer);
   stopGameMusic();
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
@@ -73,6 +74,7 @@ function openGame(game) {
   if (game === "atlas") newAtlasGame();
   if (game === "footballer-atlas") newFootballerAtlasGame();
   if (game === "country-capitals") newCountryCapitalsGame();
+  if (game === "math-puzzle") newMathPuzzleGame();
 }
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => { playClickSound(); openGame(button.dataset.openGame); }));
@@ -280,6 +282,60 @@ $("capitals-form").addEventListener("submit", (event) => { event.preventDefault(
 $("capitals-next").addEventListener("click", () => { if (capitalsGame.index + 1 === capitalsGame.questions.length) { capitalsGame.questions = capitalQuestions(); capitalsGame.index = 0; } else capitalsGame.index++; capitalsGame.answered = false; $("capitals-answer").value = ""; $("capitals-answer").disabled = false; $("capitals-form").querySelector("button").disabled = false; $("capitals-next").classList.add("hidden"); renderCapitals(); $("capitals-answer").focus(); });
 $("capitals-reset").addEventListener("click", newCountryCapitalsGame);
 $("capitals-start-reset").addEventListener("click", newCountryCapitalsGame);
+
+let mathMode = "easy", mathGame = null, mathTimer = null;
+function mathRandom(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function newMathQuestion() {
+  const operation = ["+", "−", "×", "÷"][mathRandom(0, 3)];
+  let a, b, result;
+  const blank = mathRandom(0, 2);
+  if (mathMode === "easy") {
+    if (operation === "+") { a = mathRandom(1, 8); b = mathRandom(1, 9 - a); result = a + b; }
+    if (operation === "−") { a = mathRandom(2, 9); b = mathRandom(1, a - 1); result = a - b; }
+    if (operation === "×") { a = mathRandom(1, 9); b = mathRandom(1, Math.floor(9 / a)); result = a * b; }
+    if (operation === "÷") { b = mathRandom(1, 9); result = mathRandom(1, Math.floor(9 / b)); a = b * result; }
+  } else if (mathMode === "normal") {
+    if (operation === "+") { a = mathRandom(10, 89); b = mathRandom(10, 99 - a); result = a + b; }
+    if (operation === "−") { a = mathRandom(20, 99); b = mathRandom(10, a - 10); result = a - b; }
+    if (operation === "×") { a = mathRandom(10, 19); b = mathRandom(10, 19); result = a * b; }
+    if (operation === "÷") { b = mathRandom(10, 19); result = mathRandom(10, 19); a = b * result; }
+  } else {
+    if (operation === "+") { a = mathRandom(100, 899); b = mathRandom(100, 999 - a); result = a + b; }
+    if (operation === "−") { a = mathRandom(200, 999); b = mathRandom(100, a - 100); result = a - b; }
+    if (operation === "×") { a = mathRandom(100, 199); b = mathRandom(100, 199); result = a * b; }
+    if (operation === "÷") { b = mathRandom(100, 199); result = mathRandom(100, 199); a = b * result; }
+  }
+  const values = [a, b, result], answer = values[blank];
+  values[blank] = "_";
+  return { answer, text: `${values[0]} ${operation} ${values[1]} = ${values[2]}` };
+}
+function newMathPuzzleGame() { clearInterval(mathTimer); mathGame = null; $("math-start").classList.remove("hidden"); $("math-play").classList.add("hidden"); }
+function renderMath(message) {
+  if (!mathGame) return;
+  const seconds = Math.max(0, mathGame.remaining);
+  const saved = load(scoreKey, []).find((item) => item.name.toLowerCase() === playerName().toLowerCase() && item.game === "Math Puzzle")?.score || 0;
+  $("math-score").textContent = mathGame.score;
+  $("math-best").textContent = Math.max(saved, mathGame.score);
+  $("math-timer").textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  $("math-question").innerHTML = `<small>Solve this</small>${mathGame.question.text}`;
+  if (message) $("math-message").textContent = message;
+}
+function finishMath(message = `Time is up! You scored ${mathGame.score} point${mathGame.score === 1 ? "" : "s"}.`) {
+  if (!mathGame || mathGame.over) return;
+  mathGame.over = true; clearInterval(mathTimer); recordScore("Math Puzzle", mathGame.score);
+  $("math-answer").disabled = true; $("math-form").querySelector("button").disabled = true; $("math-next").classList.add("hidden"); renderMath(message);
+}
+function tickMath() { if (!mathGame || mathGame.over) return; mathGame.remaining--; if (mathGame.remaining <= 0) { mathGame.remaining = 0; finishMath(); } else renderMath(); }
+function startMathPuzzle() {
+  clearInterval(mathTimer); mathGame = { score: 0, remaining: 120, question: newMathQuestion(), answered: false, over: false };
+  $("math-start").classList.add("hidden"); $("math-play").classList.remove("hidden"); $("math-answer").value = ""; $("math-answer").disabled = false; $("math-form").querySelector("button").disabled = false; $("math-next").classList.add("hidden"); renderMath("Type the missing number."); mathTimer = setInterval(tickMath, 1000); $("math-answer").focus();
+}
+document.querySelectorAll("[data-math-mode]").forEach((button) => button.addEventListener("click", () => { mathMode = button.dataset.mathMode; document.querySelectorAll("[data-math-mode]").forEach((item) => item.classList.toggle("selected", item === button)); }));
+$("math-start-button").addEventListener("click", startMathPuzzle);
+$("math-form").addEventListener("submit", (event) => { event.preventDefault(); if (!mathGame || mathGame.answered || mathGame.over) return; const guess = Number($("math-answer").value); if (!Number.isFinite(guess)) return; mathGame.answered = true; const correct = guess === mathGame.question.answer; if (correct) mathGame.score++; $("math-answer").disabled = true; $("math-form").querySelector("button").disabled = true; $("math-next").classList.remove("hidden"); renderMath(correct ? `Correct! ${mathGame.question.answer} is right. +1 point` : `Not quite. The answer is ${mathGame.question.answer}.`); });
+$("math-next").addEventListener("click", () => { mathGame.question = newMathQuestion(); mathGame.answered = false; $("math-answer").value = ""; $("math-answer").disabled = false; $("math-form").querySelector("button").disabled = false; $("math-next").classList.add("hidden"); renderMath("Type the missing number."); $("math-answer").focus(); });
+$("math-reset").addEventListener("click", newMathPuzzleGame);
+$("math-start-reset").addEventListener("click", newMathPuzzleGame);
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;
