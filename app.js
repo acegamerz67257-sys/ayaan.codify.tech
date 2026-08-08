@@ -56,6 +56,7 @@ function showHome() {
   clearInterval(footballAtlasTimer);
   clearInterval(capitalsTimer);
   clearInterval(mathTimer);
+  clearInterval(continentsTimer);
   stopGameMusic();
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
@@ -75,6 +76,7 @@ function openGame(game) {
   if (game === "footballer-atlas") newFootballerAtlasGame();
   if (game === "country-capitals") newCountryCapitalsGame();
   if (game === "math-puzzle") newMathPuzzleGame();
+  if (game === "countries-continents") newContinentsGame();
 }
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => { playClickSound(); openGame(button.dataset.openGame); }));
@@ -336,6 +338,44 @@ $("math-form").addEventListener("submit", (event) => { event.preventDefault(); i
 $("math-next").addEventListener("click", () => { mathGame.question = newMathQuestion(); mathGame.answered = false; $("math-answer").value = ""; $("math-answer").disabled = false; $("math-form").querySelector("button").disabled = false; $("math-next").classList.add("hidden"); renderMath("Type the missing number."); $("math-answer").focus(); });
 $("math-reset").addEventListener("click", newMathPuzzleGame);
 $("math-start-reset").addEventListener("click", newMathPuzzleGame);
+
+const continentFallback = [["India","Asia"],["Japan","Asia"],["China","Asia"],["Thailand","Asia"],["Nigeria","Africa"],["Egypt","Africa"],["Kenya","Africa"],["South Africa","Africa"],["France","Europe"],["Germany","Europe"],["Italy","Europe"],["Spain","Europe"],["Brazil","South America"],["Argentina","South America"],["Chile","South America"],["Peru","South America"],["United States","North America"],["Canada","North America"],["Mexico","North America"],["Jamaica","North America"],["Australia","Oceania"],["New Zealand","Oceania"],["Fiji","Oceania"]];
+let continentsGame = null, continentsTimer = null, continentQuestions = continentFallback, continentsLoaded = false;
+const continentKey = (value) => value.trim().toLowerCase().replace(/[^a-z]/g, "");
+const shuffledContinents = () => [...continentQuestions].sort(() => Math.random() - .5);
+async function loadContinents() {
+  if (continentsLoaded) return;
+  try {
+    const response = await fetch("https://restcountries.com/v3.1/all?fields=name,continents");
+    if (!response.ok) throw new Error("Country list unavailable");
+    const data = await response.json();
+    const worldwide = data.map((country) => [country.name?.common, country.continents?.[0]]).filter(([name, continent]) => name && continent);
+    if (worldwide.length > 100) continentQuestions = worldwide;
+  } catch { /* The built-in countries keep the game playable if the list is unavailable. */ }
+  continentsLoaded = true;
+}
+function newContinentsGame() { clearInterval(continentsTimer); continentsGame = null; $("continents-start").classList.remove("hidden"); $("continents-play").classList.add("hidden"); }
+function renderContinents(message) {
+  if (!continentsGame) return;
+  const current = continentsGame.questions[continentsGame.index], seconds = Math.max(0, continentsGame.remaining);
+  const saved = load(scoreKey, []).find((item) => item.name.toLowerCase() === playerName().toLowerCase() && item.game === "Countries & Continents")?.score || 0;
+  $("continents-score").textContent = continentsGame.score; $("continents-best").textContent = Math.max(saved, continentsGame.score); $("continents-timer").textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; $("continents-country").innerHTML = `<small>Bot says</small>${current[0]}`;
+  if (message) $("continents-message").textContent = message;
+}
+function finishContinents(message = `Time is up! You scored ${continentsGame.score} point${continentsGame.score === 1 ? "" : "s"}.`) {
+  if (!continentsGame || continentsGame.over) return;
+  continentsGame.over = true; clearInterval(continentsTimer); recordScore("Countries & Continents", continentsGame.score); $("continents-answer").disabled = true; $("continents-form").querySelector("button").disabled = true; $("continents-next").classList.add("hidden"); renderContinents(message);
+}
+function tickContinents() { if (!continentsGame || continentsGame.over) return; continentsGame.remaining--; if (continentsGame.remaining <= 0) { continentsGame.remaining = 0; finishContinents(); } else renderContinents(); }
+async function startContinents() {
+  const button = $("continents-start-button"); button.disabled = true; button.textContent = "Loading countries…"; await loadContinents(); clearInterval(continentsTimer); continentsGame = { score: 0, remaining: 120, questions: shuffledContinents(), index: 0, answered: false, over: false };
+  $("continents-start").classList.add("hidden"); $("continents-play").classList.remove("hidden"); $("continents-answer").value = ""; $("continents-answer").disabled = false; $("continents-form").querySelector("button").disabled = false; $("continents-next").classList.add("hidden"); button.disabled = false; button.textContent = "Start 2-minute game"; renderContinents("Which continent is this country in?"); continentsTimer = setInterval(tickContinents, 1000); $("continents-answer").focus();
+}
+$("continents-start-button").addEventListener("click", startContinents);
+$("continents-form").addEventListener("submit", (event) => { event.preventDefault(); if (!continentsGame || continentsGame.answered || continentsGame.over) return; const current = continentsGame.questions[continentsGame.index], correct = continentKey($("continents-answer").value) === continentKey(current[1]); continentsGame.answered = true; if (correct) continentsGame.score++; $("continents-answer").disabled = true; $("continents-form").querySelector("button").disabled = true; $("continents-next").classList.remove("hidden"); renderContinents(correct ? `Correct! ${current[0]} is in ${current[1]}. +1 point` : `Not quite. ${current[0]} is in ${current[1]}.`); });
+$("continents-next").addEventListener("click", () => { if (continentsGame.index + 1 >= continentsGame.questions.length) { continentsGame.questions = shuffledContinents(); continentsGame.index = 0; } else continentsGame.index++; continentsGame.answered = false; $("continents-answer").value = ""; $("continents-answer").disabled = false; $("continents-form").querySelector("button").disabled = false; $("continents-next").classList.add("hidden"); renderContinents("Which continent is this country in?"); $("continents-answer").focus(); });
+$("continents-reset").addEventListener("click", newContinentsGame);
+$("continents-start-reset").addEventListener("click", newContinentsGame);
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;
