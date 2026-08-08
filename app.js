@@ -57,6 +57,7 @@ function showHome() {
   clearInterval(capitalsTimer);
   clearInterval(mathTimer);
   clearInterval(continentsTimer);
+  clearInterval(footballCountriesTimer);
   stopGameMusic();
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
@@ -77,6 +78,7 @@ function openGame(game) {
   if (game === "country-capitals") newCountryCapitalsGame();
   if (game === "math-puzzle") newMathPuzzleGame();
   if (game === "countries-continents") newContinentsGame();
+  if (game === "footballer-countries") newFootballerCountriesGame();
 }
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => { playClickSound(); openGame(button.dataset.openGame); }));
@@ -376,6 +378,36 @@ $("continents-form").addEventListener("submit", (event) => { event.preventDefaul
 $("continents-next").addEventListener("click", () => { if (continentsGame.index + 1 >= continentsGame.questions.length) { continentsGame.questions = shuffledContinents(); continentsGame.index = 0; } else continentsGame.index++; continentsGame.answered = false; $("continents-answer").value = ""; $("continents-answer").disabled = false; $("continents-form").querySelector("button").disabled = false; $("continents-next").classList.add("hidden"); renderContinents("Which continent is this country in?"); $("continents-answer").focus(); });
 $("continents-reset").addEventListener("click", newContinentsGame);
 $("continents-start-reset").addEventListener("click", newContinentsGame);
+
+const footballerCountries = [["Lionel Messi","Argentina"],["Julian Alvarez","Argentina"],["Lautaro Martinez","Argentina"],["Cristiano Ronaldo","Portugal"],["Bruno Fernandes","Portugal"],["Bernardo Silva","Portugal"],["Sunil Chhetri","India"],["Neymar","Brazil"],["Vinicius Junior","Brazil"],["Rodrygo","Brazil"],["Kylian Mbappe","France"],["Ousmane Dembele","France"],["Harry Kane","England"],["Jude Bellingham","England"],["Bukayo Saka","England"],["Phil Foden","England"],["Lamine Yamal","Spain"],["Pedri","Spain"],["Rodri","Spain"],["Jamal Musiala","Germany"],["Florian Wirtz","Germany"],["Kai Havertz","Germany"],["Gianluigi Donnarumma","Italy"],["Federico Chiesa","Italy"],["Virgil van Dijk","Netherlands"],["Frenkie de Jong","Netherlands"],["Kevin De Bruyne","Belgium"],["Romelu Lukaku","Belgium"],["Erling Haaland","Norway"],["Martin Odegaard","Norway"],["Alexander Isak","Sweden"],["Robert Lewandowski","Poland"],["Arda Guler","Turkey"],["Achraf Hakimi","Morocco"],["Mohamed Salah","Egypt"],["Victor Osimhen","Nigeria"],["Sadio Mane","Senegal"],["Kaoru Mitoma","Japan"],["Son Heung-min","South Korea"],["Christian Pulisic","United States"],["Alphonso Davies","Canada"],["Santiago Gimenez","Mexico"],["Luis Diaz","Colombia"],["Darwin Nunez","Uruguay"]];
+let footballCountriesGame = null, footballCountriesTimer = null;
+const footballCountryAliases = { usa:"unitedstates", us:"unitedstates", america:"unitedstates", korea:"southkorea", holland:"netherlands", uk:"england" };
+const footballCountryKey = (value) => value.trim().toLowerCase().replace(/[^a-z]/g, "");
+function footballCountryDistance(first, second) { const row = Array.from({ length: second.length + 1 }, (_, index) => index); for (let i = 1; i <= first.length; i++) { let previous = row[0]; row[0] = i; for (let j = 1; j <= second.length; j++) { const current = row[j]; row[j] = Math.min(row[j] + 1, row[j - 1] + 1, previous + (first[i - 1] === second[j - 1] ? 0 : 1)); previous = current; } } return row[second.length]; }
+function isFootballCountry(typed, answer) { const guess = footballCountryAliases[footballCountryKey(typed)] || footballCountryKey(typed), correct = footballCountryKey(answer); return guess === correct || (guess.length > 4 && footballCountryDistance(guess, correct) <= 2); }
+function shuffledFootballerCountries() { return [...footballerCountries].sort(() => Math.random() - .5); }
+function newFootballerCountriesGame() { clearInterval(footballCountriesTimer); footballCountriesGame = null; $("football-countries-start").classList.remove("hidden"); $("football-countries-play").classList.add("hidden"); }
+function renderFootballerCountries(message) {
+  if (!footballCountriesGame) return;
+  const current = footballCountriesGame.questions[footballCountriesGame.index], seconds = Math.max(0, footballCountriesGame.remaining);
+  const saved = load(scoreKey, []).find((item) => item.name.toLowerCase() === playerName().toLowerCase() && item.game === "Footballer Countries")?.score || 0;
+  $("football-countries-score").textContent = footballCountriesGame.score; $("football-countries-best").textContent = Math.max(saved, footballCountriesGame.score); $("football-countries-timer").textContent = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; $("football-countries-player").innerHTML = `<small>Bot says</small>${current[0]}`;
+  if (message) $("football-countries-message").textContent = message;
+}
+function finishFootballerCountries(message = `Time is up! You scored ${footballCountriesGame.score} point${footballCountriesGame.score === 1 ? "" : "s"}.`) {
+  if (!footballCountriesGame || footballCountriesGame.over) return;
+  footballCountriesGame.over = true; clearInterval(footballCountriesTimer); recordScore("Footballer Countries", footballCountriesGame.score); $("football-countries-answer").disabled = true; $("football-countries-form").querySelector("button").disabled = true; $("football-countries-next").classList.add("hidden"); renderFootballerCountries(message);
+}
+function tickFootballerCountries() { if (!footballCountriesGame || footballCountriesGame.over) return; footballCountriesGame.remaining--; if (footballCountriesGame.remaining <= 0) { footballCountriesGame.remaining = 0; finishFootballerCountries(); } else renderFootballerCountries(); }
+function startFootballerCountries() {
+  clearInterval(footballCountriesTimer); footballCountriesGame = { score: 0, remaining: 120, questions: shuffledFootballerCountries(), index: 0, answered: false, over: false };
+  $("football-countries-start").classList.add("hidden"); $("football-countries-play").classList.remove("hidden"); $("football-countries-answer").value = ""; $("football-countries-answer").disabled = false; $("football-countries-form").querySelector("button").disabled = false; $("football-countries-next").classList.add("hidden"); renderFootballerCountries("Which country is this footballer from?"); footballCountriesTimer = setInterval(tickFootballerCountries, 1000); $("football-countries-answer").focus();
+}
+$("football-countries-start-button").addEventListener("click", startFootballerCountries);
+$("football-countries-form").addEventListener("submit", (event) => { event.preventDefault(); if (!footballCountriesGame || footballCountriesGame.answered || footballCountriesGame.over) return; const current = footballCountriesGame.questions[footballCountriesGame.index], correct = isFootballCountry($("football-countries-answer").value, current[1]); footballCountriesGame.answered = true; if (correct) footballCountriesGame.score++; $("football-countries-answer").disabled = true; $("football-countries-form").querySelector("button").disabled = true; $("football-countries-next").classList.remove("hidden"); renderFootballerCountries(correct ? `Correct! ${current[0]} is from ${current[1]}. +1 point` : `Not quite. ${current[0]} is from ${current[1]}.`); });
+$("football-countries-next").addEventListener("click", () => { if (footballCountriesGame.index + 1 >= footballCountriesGame.questions.length) { footballCountriesGame.questions = shuffledFootballerCountries(); footballCountriesGame.index = 0; } else footballCountriesGame.index++; footballCountriesGame.answered = false; $("football-countries-answer").value = ""; $("football-countries-answer").disabled = false; $("football-countries-form").querySelector("button").disabled = false; $("football-countries-next").classList.add("hidden"); renderFootballerCountries("Which country is this footballer from?"); $("football-countries-answer").focus(); });
+$("football-countries-reset").addEventListener("click", newFootballerCountriesGame);
+$("football-countries-start-reset").addEventListener("click", newFootballerCountriesGame);
 
 // Number Challenge — the timer starts only when this game is opened.
 let numberGame = null, numberTimer = null;

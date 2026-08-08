@@ -39,6 +39,7 @@
           <button class="game-tile capitals-tile" data-open-game="country-capitals"><span>🌐</span><strong>Country Capitals</strong><small>Answer the Bot’s capital questions</small><b>Play →</b></button>
           <button class="game-tile math-tile" data-open-game="math-puzzle"><span>➗</span><strong>Math Puzzle</strong><small>Find the missing number before time runs out</small><b>Play →</b></button>
           <button class="game-tile continents-tile" data-open-game="countries-continents"><span>🗺️</span><strong>Countries &amp; Continents</strong><small>Match each country to its continent</small><b>Play →</b></button>
+          <button class="game-tile football-countries-tile" data-open-game="footballer-countries"><span>⚽ 🌍</span><strong>Footballer Countries</strong><small>Match famous players to their countries</small><b>Play →</b></button>
         </div>
         <section id="leaderboard" class="home-leaderboard"><p class="eyebrow">YOUR HIGH SCORES</p><h2>Leaderboard</h2><div id="leaderboard-list" class="leaderboard-list"></div></section>
         <section id="share" class="share-card">
@@ -176,6 +177,14 @@
         </div>
       </section>
 
+      <section id="footballer-countries" class="game-section alt-section game-screen hidden">
+        <div class="section-heading"><p class="eyebrow">12 — FOOTBALL QUIZ</p><h2>Footballer Countries</h2><p>The Bot names a well-known footballer. Type the country they represent and answer as many as you can in two minutes.</p></div>
+        <div class="game-card football-countries-card">
+          <div id="football-countries-start"><p class="eyebrow">READY?</p><p>Examples: Lionel Messi → Argentina · Cristiano Ronaldo → Portugal · Sunil Chhetri → India</p><button class="button primary" id="football-countries-start-button">Start 2-minute game</button><div class="game-footer"><span>One correct answer = one point</span><span><button id="football-countries-start-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div></div>
+          <div id="football-countries-play" class="hidden"><div class="football-stats"><div><span>Score</span><strong id="football-countries-score">0</strong></div><div><span>Time left</span><strong id="football-countries-timer">2:00</strong></div><div><span>Best</span><strong id="football-countries-best">0</strong></div></div><div class="football-country-question" id="football-countries-player"><small>Bot says</small>Lionel Messi</div><p id="football-countries-message" class="game-message" aria-live="polite">Which country is this footballer from?</p><form id="football-countries-form" class="guess-form"><label class="sr-only" for="football-countries-answer">Country</label><input id="football-countries-answer" autocomplete="off" placeholder="Type the country" required /><button class="button primary">Answer →</button></form><button class="button secondary hidden" id="football-countries-next">Next footballer →</button><div class="game-footer"><span>One correct answer = one point</span><span><button id="football-countries-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div></div>
+        </div>
+      </section>
+
     </main>
     <div class="login-modal hidden" id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-title">
       <div class="login-card">
@@ -194,6 +203,6 @@
     </div>
     <footer>Made for a little friendly competition.</footer>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="app.js?v=20260808"></script>
+    <script src="app.js?v=20260808-2"></script>
   </body>
 </html>
