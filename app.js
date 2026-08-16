@@ -84,6 +84,8 @@ document.querySelectorAll("[data-home]").forEach((button) => button.addEventList
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => { playClickSound(); openGame(button.dataset.openGame); }));
 document.addEventListener("click", (event) => { if (event.target.closest("button") && event.target.id !== "audio-toggle" && !event.target.closest("[data-open-game]")) playClickSound(); });
 $("audio-toggle").addEventListener("click", () => { audioEnabled = !audioEnabled; localStorage.setItem(audioSettingKey, audioEnabled ? "on" : "off"); if (!audioEnabled) stopGameMusic(); else { playClickSound(); const activeGame = [...document.querySelectorAll(".game-screen")].some((screen) => !screen.classList.contains("hidden")); if (activeGame) startGameMusic(); } refreshAudioButton(); });
+$("menu-toggle").addEventListener("click", () => { const menu = $("site-nav"), open = menu.classList.toggle("mobile-open"); $("menu-toggle").setAttribute("aria-expanded", String(open)); $("menu-toggle").setAttribute("aria-label", open ? "Close menu" : "Open menu"); });
+$("site-nav").addEventListener("click", () => { $("site-nav").classList.remove("mobile-open"); $("menu-toggle").setAttribute("aria-expanded", "false"); $("menu-toggle").setAttribute("aria-label", "Open menu"); });
 refreshAudioButton();
 
 // Local player accounts — a simple four-digit code for this browser.
