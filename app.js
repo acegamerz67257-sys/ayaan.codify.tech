@@ -93,6 +93,27 @@ function openGame(game) {
 }
 document.querySelectorAll("[data-home]").forEach((button) => button.addEventListener("click", (event) => { event.preventDefault(); showHome(); }));
 document.querySelectorAll("[data-open-game]").forEach((button) => button.addEventListener("click", () => { playClickSound(); openGame(button.dataset.openGame); }));
+let pendingNewGameButton = null;
+function closeNewGameConfirm() { $("new-game-modal").classList.add("hidden"); pendingNewGameButton = null; }
+document.addEventListener("click", (event) => {
+  const button = event.target.closest(".new-game-button");
+  if (!button) return;
+  if (button.dataset.confirmed === "true") { delete button.dataset.confirmed; return; }
+  event.preventDefault(); event.stopImmediatePropagation();
+  pendingNewGameButton = button;
+  $("new-game-modal").classList.remove("hidden");
+  $("new-game-cancel").focus();
+}, true);
+$("new-game-cancel").addEventListener("click", closeNewGameConfirm);
+$("new-game-confirm").addEventListener("click", () => {
+  if (!pendingNewGameButton) return closeNewGameConfirm();
+  const button = pendingNewGameButton;
+  closeNewGameConfirm();
+  button.dataset.confirmed = "true";
+  button.click();
+});
+$("new-game-modal").addEventListener("click", (event) => { if (event.target === $("new-game-modal")) closeNewGameConfirm(); });
+document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !$("new-game-modal").classList.contains("hidden")) closeNewGameConfirm(); });
 document.addEventListener("click", (event) => { if (event.target.closest("button") && event.target.id !== "audio-toggle" && !event.target.closest("[data-open-game]")) playClickSound(); });
 $("audio-toggle").addEventListener("click", () => { audioEnabled = !audioEnabled; localStorage.setItem(audioSettingKey, audioEnabled ? "on" : "off"); if (!audioEnabled) stopGameMusic(); else { playClickSound(); const activeGame = [...document.querySelectorAll(".game-screen")].some((screen) => !screen.classList.contains("hidden")); if (activeGame) startGameMusic(); } refreshAudioButton(); });
 $("menu-toggle").addEventListener("click", () => { const menu = $("site-nav"), open = menu.classList.toggle("mobile-open"); $("menu-toggle").setAttribute("aria-expanded", String(open)); $("menu-toggle").setAttribute("aria-label", open ? "Close menu" : "Open menu"); });
