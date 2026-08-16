@@ -157,6 +157,8 @@ $("login-form").addEventListener("submit", (event) => {
   refreshAccountUi(); closeLogin();
 });
 refreshAccountUi();
+// Offer the optional login as soon as the website opens. Players can close it with × and play for fun.
+window.setTimeout(() => openLogin("login"), 120);
 
 // Sharing
 const shareText = "Come play Game Night by Ayaan with me!";
