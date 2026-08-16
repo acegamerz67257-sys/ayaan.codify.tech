@@ -7,6 +7,16 @@ const accountKey = "game-night-accounts";
 const activeAccountKey = "game-night-active-account";
 const liveSiteUrl = "https://acegamerz67257-sys.github.io/game-night-by-ayaan/";
 const audioSettingKey = "game-night-audio-enabled";
+// Anonymous site totals. This quietly does nothing while playing from a local file.
+function trackSiteActivity(event, detail = {}) {
+  fetch("track.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ event, page: location.pathname.split("/").pop() || "index.html", ...detail }),
+    keepalive: true
+  }).catch(() => {});
+}
+trackSiteActivity("page_view");
 let audioEnabled = true;
 let audioContext = null, musicTimer = null, musicStep = 0;
 function ensureAudio() {
@@ -63,6 +73,7 @@ function showHome() {
   $("home").classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" }); renderLeaderboard();
 }
 function openGame(game) {
+  trackSiteActivity("game_start", { game });
   $("home").classList.add("hidden");
   document.querySelectorAll(".game-screen").forEach((screen) => screen.classList.add("hidden"));
   $(game).classList.remove("hidden"); window.scrollTo({ top: 0, behavior: "smooth" });
