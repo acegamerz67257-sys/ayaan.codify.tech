@@ -54,12 +54,6 @@ if ($event === 'page_view') {
     $data['games'][$game]['starts']++;
     if ($player !== '') {
         $date = gmdate('Y-m-d');
-        $oldestDate = gmdate('Y-m-d', strtotime('-90 days'));
-        $data['players_by_date'] = array_filter(
-            $data['players_by_date'],
-            fn($recordedDate) => $recordedDate >= $oldestDate,
-            ARRAY_FILTER_USE_KEY
-        );
         if (!isset($data['players_by_date'][$date]) || !is_array($data['players_by_date'][$date])) {
             $data['players_by_date'][$date] = [];
         }
