@@ -7,12 +7,21 @@ const accountKey = "game-night-accounts";
 const activeAccountKey = "game-night-active-account";
 const liveSiteUrl = "https://acegamerz67257-sys.github.io/game-night-by-ayaan/";
 const audioSettingKey = "game-night-audio-enabled";
+const analyticsPlayerKey = "game-night-analytics-player";
+function analyticsPlayerId() {
+  let player = localStorage.getItem(analyticsPlayerKey);
+  if (!player) {
+    player = window.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem(analyticsPlayerKey, player);
+  }
+  return player;
+}
 // Anonymous site totals. This quietly does nothing while playing from a local file.
 function trackSiteActivity(event, detail = {}) {
   fetch("track.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ event, page: location.pathname.split("/").pop() || "index.html", ...detail }),
+    body: JSON.stringify({ event, page: location.pathname.split("/").pop() || "index.html", player: analyticsPlayerId(), ...detail }),
     keepalive: true
   }).catch(() => {});
 }

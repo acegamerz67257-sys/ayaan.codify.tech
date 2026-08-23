@@ -13,6 +13,7 @@ $input = json_decode(file_get_contents('php://input'), true);
 $event = is_array($input) ? ($input['event'] ?? '') : '';
 $page = is_array($input) ? ($input['page'] ?? 'index.html') : 'index.html';
 $game = is_array($input) ? ($input['game'] ?? '') : '';
+$player = is_array($input) ? ($input['player'] ?? '') : '';
 
 if (!in_array($event, ['page_view', 'game_start'], true)) {
     http_response_code(400);
@@ -23,6 +24,7 @@ if (!in_array($event, ['page_view', 'game_start'], true)) {
 // Keep the data tidy even if someone sends unexpected text to this public endpoint.
 $page = preg_match('/^[a-z0-9._-]{1,80}$/i', $page) ? $page : 'index.html';
 $game = preg_match('/^[a-z0-9-]{1,80}$/i', $game) ? $game : '';
+$player = preg_match('/^[a-z0-9-]{8,100}$/i', $player) ? $player : '';
 if ($event === 'game_start' && $game === '') {
     http_response_code(400);
     echo json_encode(['ok' => false]);
@@ -42,6 +44,7 @@ $data = json_decode($contents, true);
 if (!is_array($data)) $data = ['pages' => [], 'games' => [], 'updated_at' => null];
 if (!isset($data['pages']) || !is_array($data['pages'])) $data['pages'] = [];
 if (!isset($data['games']) || !is_array($data['games'])) $data['games'] = [];
+if (!isset($data['players_by_date']) || !is_array($data['players_by_date'])) $data['players_by_date'] = [];
 
 if ($event === 'page_view') {
     if (!isset($data['pages'][$page])) $data['pages'][$page] = ['views' => 0];
@@ -49,6 +52,23 @@ if ($event === 'page_view') {
 } else {
     if (!isset($data['games'][$game])) $data['games'][$game] = ['starts' => 0];
     $data['games'][$game]['starts']++;
+    if ($player !== '') {
+        $date = gmdate('Y-m-d');
+        $oldestDate = gmdate('Y-m-d', strtotime('-90 days'));
+        $data['players_by_date'] = array_filter(
+            $data['players_by_date'],
+            fn($recordedDate) => $recordedDate >= $oldestDate,
+            ARRAY_FILTER_USE_KEY
+        );
+        if (!isset($data['players_by_date'][$date]) || !is_array($data['players_by_date'][$date])) {
+            $data['players_by_date'][$date] = [];
+        }
+        // Include the date in the hash so a browser cannot be followed from day to day.
+        $dailyPlayer = hash('sha256', $date . ':' . $player);
+        if (!in_array($dailyPlayer, $data['players_by_date'][$date], true)) {
+            $data['players_by_date'][$date][] = $dailyPlayer;
+        }
+    }
 }
 $data['updated_at'] = gmdate('c');
 
