@@ -76,6 +76,7 @@
           <div class="number-stats"><div><span>Round</span><strong id="number-round">1 / 3</strong></div><div><span>Time left</span><strong id="number-timer">2:00</strong></div><div><span>Points</span><strong id="number-points">0</strong></div></div>
           <p id="number-message" class="game-message" aria-live="polite">Pick a number from 1 to 100.</p>
           <form id="number-form" class="guess-form"><label class="sr-only" for="number-guess">Your guess</label><input id="number-guess" type="number" inputmode="numeric" min="1" max="100" placeholder="Your guess" required /><button class="button primary">Guess</button></form>
+          <div class="number-history" aria-live="polite"><span>Guess history</span><div id="number-history-list"><small>No guesses yet</small></div></div>
           <button id="number-next" class="button secondary hidden">Next round →</button>
           <div class="game-footer"><span id="number-attempts">0 guesses this round</span><span><button id="number-reset" class="text-button game-action new-game-button">New game ↻</button><button class="text-button game-action all-games-button" data-home>All games</button></span></div>
         </div>
