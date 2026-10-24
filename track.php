@@ -45,6 +45,7 @@ if (!is_array($data)) $data = ['pages' => [], 'games' => [], 'updated_at' => nul
 if (!isset($data['pages']) || !is_array($data['pages'])) $data['pages'] = [];
 if (!isset($data['games']) || !is_array($data['games'])) $data['games'] = [];
 if (!isset($data['players_by_date']) || !is_array($data['players_by_date'])) $data['players_by_date'] = [];
+if (!isset($data['players_by_month']) || !is_array($data['players_by_month'])) $data['players_by_month'] = [];
 
 if ($event === 'page_view') {
     if (!isset($data['pages'][$page])) $data['pages'][$page] = ['views' => 0];
@@ -61,6 +62,16 @@ if ($event === 'page_view') {
         $dailyPlayer = hash('sha256', $date . ':' . $player);
         if (!in_array($dailyPlayer, $data['players_by_date'][$date], true)) {
             $data['players_by_date'][$date][] = $dailyPlayer;
+        }
+        // A separate month-only hash lets the dashboard count monthly players without
+        // creating a person-level history across months.
+        $month = gmdate('Y-m');
+        if (!isset($data['players_by_month'][$month]) || !is_array($data['players_by_month'][$month])) {
+            $data['players_by_month'][$month] = [];
+        }
+        $monthlyPlayer = hash('sha256', $month . ':' . $player);
+        if (!in_array($monthlyPlayer, $data['players_by_month'][$month], true)) {
+            $data['players_by_month'][$month][] = $monthlyPlayer;
         }
     }
 }
