@@ -21,11 +21,10 @@ function trackSiteActivity(event, detail = {}) {
   fetch("track.php", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ event, page: location.pathname.split("/").pop() || "index.html", player: analyticsPlayerId(), ...detail }),
+    body: JSON.stringify({ event, player: analyticsPlayerId(), ...detail }),
     keepalive: true
   }).catch(() => {});
 }
-trackSiteActivity("page_view");
 let audioEnabled = true;
 let audioContext = null, musicTimer = null, musicStep = 0;
 function ensureAudio() {
