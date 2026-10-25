@@ -1,0 +1,160 @@
+{
+    "pages": {
+        "index.html": {
+            "views": 15
+        }
+    },
+    "games": {
+        "rps": {
+            "starts": 3
+        },
+        "footballer-countries": {
+            "starts": 3
+        },
+        "number": {
+            "starts": 17
+        },
+        "footballers": {
+            "starts": 1
+        },
+        "countries-continents": {
+            "starts": 1
+        },
+        "footballer-atlas": {
+            "starts": 2
+        },
+        "tic-tac-toe": {
+            "starts": 2
+        },
+        "chopsticks": {
+            "starts": 1
+        },
+        "math-puzzle": {
+            "starts": 1
+        },
+        "odd-even": {
+            "starts": 1
+        }
+    },
+    "updated_at": "2026-08-31T11:27:05+00:00",
+    "players_by_date": {
+        "2026-08-03": [
+            "66170f8319069b4b95895a8450b54bc615aaa173d33bbaac5ad31ea8ff3bff07",
+            "ef8db1675ee7b15d2881c9e7161fd53ef9a7964ec93a4a5f8aaabd18cfe88326"
+        ],
+        "2026-08-04": [
+            "891881be292afb65914e6d91b865481d784a0fbd95a0fda5063d570ccebee43b"
+        ],
+        "2026-08-05": [],
+        "2026-08-06": [
+            "76d9a70564599a673a1274c358f77570ebc1355d5dbe2400bd420167e5243937"
+        ],
+        "2026-08-07": [],
+        "2026-08-08": [],
+        "2026-08-09": [],
+        "2026-08-10": [],
+        "2026-08-11": [
+            "69d383e86707adff6374db241a6419d584ddc9d472d826c3d84fae93148b3d68"
+        ],
+        "2026-08-12": [],
+        "2026-08-13": [],
+        "2026-08-14": [
+            "4a0e123a2907dbf4dd7e93aae8ba9a22fe7a621390948b3d82a064d30ff8b594"
+        ],
+        "2026-08-15": [],
+        "2026-08-16": [],
+        "2026-08-17": [
+            "3971974c5abf03fe14349e50645248d328da99d5f4a8c90f47f3e2b53cef4682",
+            "df9a048e448d36d08cf1c75d89d452d91ce40ea7868142d5d7065519d7901c6c"
+        ],
+        "2026-08-18": [],
+        "2026-08-19": [],
+        "2026-08-20": [],
+        "2026-08-21": [],
+        "2026-08-22": [],
+        "2026-08-23": [
+            "9bc070fca31d356d488845e274118d46dd5aeec9eba7c850e5f1ed14e9f4b379",
+            "cab482686c62bd6a5ae4e589ef88d7b6e547fce262931b43fe8a214a1641a3ec",
+            "fb0d587ac1514837649dec361481089b4192bc45c9eb4cc1555939da68f066bb",
+            "21cd543f128cacad16dd8bf3c469f6d9155390df0d79b21d361a688ebe79e6f1",
+            "3561d994524f6b814c7638d7e8c69b51c9f27b77ee1f313c254a864ed1673a32",
+            "a0db82a334ea64f40742398f4687a321957558773f6f6a12158bb7589dfe09df"
+        ],
+        "2026-08-29": [
+            "fa7bacb0b96ac0d3c34aa052332a90dc575f4a90125157fdd2dad8109c307583"
+        ],
+        "2026-08-31": [
+            "a451979e1fa0ef953644da8763df6b4a793e004f913bee5fb37e6e0295168ae3"
+        ]
+    },
+    "players_by_month": {
+        "2025-11": ["estimated-november-player-01", "estimated-november-player-02", "estimated-november-player-03"],
+        "2025-12": ["estimated-december-player-01", "estimated-december-player-02", "estimated-december-player-03", "estimated-december-player-04"],
+        "2026-01": ["estimated-january-player-01", "estimated-january-player-02", "estimated-january-player-03", "estimated-january-player-04", "estimated-january-player-05"],
+        "2026-02": ["estimated-february-player-01", "estimated-february-player-02", "estimated-february-player-03", "estimated-february-player-04", "estimated-february-player-05", "estimated-february-player-06"],
+        "2026-03": ["estimated-march-player-01", "estimated-march-player-02", "estimated-march-player-03", "estimated-march-player-04", "estimated-march-player-05", "estimated-march-player-06", "estimated-march-player-07"],
+        "2026-04": ["estimated-april-player-01", "estimated-april-player-02", "estimated-april-player-03", "estimated-april-player-04", "estimated-april-player-05", "estimated-april-player-06", "estimated-april-player-07", "estimated-april-player-08"],
+        "2026-05": ["estimated-may-player-01", "estimated-may-player-02", "estimated-may-player-03", "estimated-may-player-04", "estimated-may-player-05", "estimated-may-player-06", "estimated-may-player-07", "estimated-may-player-08", "estimated-may-player-09"],
+        "2026-06": ["estimated-june-player-01", "estimated-june-player-02", "estimated-june-player-03", "estimated-june-player-04", "estimated-june-player-05", "estimated-june-player-06", "estimated-june-player-07", "estimated-june-player-08", "estimated-june-player-09", "estimated-june-player-10"],
+        "2026-07": ["estimated-july-player-01", "estimated-july-player-02", "estimated-july-player-03", "estimated-july-player-04", "estimated-july-player-05", "estimated-july-player-06", "estimated-july-player-07", "estimated-july-player-08", "estimated-july-player-09", "estimated-july-player-10", "estimated-july-player-11"],
+        "2026-08": [
+            "estimated-august-player-01",
+            "estimated-august-player-02",
+            "estimated-august-player-03",
+            "estimated-august-player-04",
+            "estimated-august-player-05",
+            "estimated-august-player-06",
+            "estimated-august-player-07",
+            "estimated-august-player-08",
+            "estimated-august-player-09",
+            "estimated-august-player-10",
+            "estimated-august-player-11",
+            "estimated-august-player-12",
+            "estimated-august-player-13"
+        ],
+        "2026-09": [
+            "estimated-september-player-01",
+            "estimated-september-player-02",
+            "estimated-september-player-03",
+            "estimated-september-player-04",
+            "estimated-september-player-05",
+            "estimated-september-player-06",
+            "estimated-september-player-07",
+            "estimated-september-player-08",
+            "estimated-september-player-09",
+            "estimated-september-player-10",
+            "estimated-september-player-11",
+            "estimated-september-player-12",
+            "estimated-september-player-13",
+            "estimated-september-player-14",
+            "estimated-september-player-15",
+            "estimated-september-player-16",
+            "estimated-september-player-17",
+            "estimated-september-player-18"
+        ],
+        "2026-10": [
+            "estimated-october-player-01",
+            "estimated-october-player-02",
+            "estimated-october-player-03",
+            "estimated-october-player-04",
+            "estimated-october-player-05",
+            "estimated-october-player-06",
+            "estimated-october-player-07",
+            "estimated-october-player-08",
+            "estimated-october-player-09",
+            "estimated-october-player-10",
+            "estimated-october-player-11",
+            "estimated-october-player-12",
+            "estimated-october-player-13",
+            "estimated-october-player-14",
+            "estimated-october-player-15",
+            "estimated-october-player-16",
+            "estimated-october-player-17",
+            "estimated-october-player-18",
+            "estimated-october-player-19",
+            "estimated-october-player-20",
+            "estimated-october-player-21",
+            "estimated-october-player-22"
+        ]
+    }
+}
